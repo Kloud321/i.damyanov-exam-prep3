@@ -26,7 +26,7 @@ jobs:
       run: npm run test:unit
     - name: Display sofutni username
       run: echo "i.damyanov"
-      
+
   deploy:
     needs: build-test
     runs-on: ubuntu-latest
@@ -36,3 +36,25 @@ jobs:
         with:
           service-id: ${{ secrets.MY_RENDER_SERVICE_ID}}
           api-key: ${{ secrets.MY_RENDER_API_KEY }} 
+
+  run-ui-test:
+    needs: deploy 
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repo
+      uses: actions/checkout@v3
+
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'
+    - name: Install projects dependencies
+      run: npm install
+    - name: Install playwright
+      run: npx playwright install
+
+    - name: run ui test for application
+      run: npm run test:ui
